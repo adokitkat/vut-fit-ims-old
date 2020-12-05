@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+###
+.vscode
+ims
+*.pdf
+!dokumentacia.pdf
