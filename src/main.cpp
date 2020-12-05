@@ -58,6 +58,64 @@ void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
 }
 */
 
+  /**
+   * @brief:  function for generating cell of given type into map or the map itself; 
+   *          to generate empty map --> _seed = 0.0f or type = default);
+   *          to empty already generated map of given size --> _seed = 999999.0f and type = deafault;
+   * 
+   * @size: sizeXsize map matrix to generate; needs declaration of size even if its generated; can enlarge the map (not shrink);
+   * @type: which seed to "plant" 
+   * @_seed: 10000 <= _seed: less dense; 100000 >= _seed: more dense;
+   * 
+   * 
+   */
+  //TODO: FOR NOW CELLS ARE TYPE OF CHAR!!! THEY NEED THE TYPE OF CELL AND SOME GOOD ATRIBUTE FILLING BOI!!!
+std::vector<std::string> seed(std::vector<std::string> mapChars, int size = MAX_SIZE, char type = '.', float _seed = 40000.0f)
+{
+  for(int y = 0; y < size; y++)
+  {
+    std::string row;
+    //std::cout << " halo:" << mapChars.size() << "\n";
+    if(y < mapChars.size()){
+      row = mapChars[y];
+    }
+    for(int x = 0; x < size; x++)
+    {
+      std::cout << pseudo_rand() << " seed:" << _seed << "\n";
+      if( pseudo_rand() < _seed)
+      {
+        if(x < row.size())
+        {
+          row[x] = type; //TODO: i am active cell of this type... fill my atributes daddy
+        }
+        else
+        {
+          row.push_back(type); //TODO: i am active cell of this type... fill my atributes daddy
+        }
+      }
+      else
+      {
+        if(x < row.size())
+        {
+          continue;
+        }
+        else
+        {
+          row.push_back('.'); //TODO: i am inactive cell of this type... just set me to active = false
+        }
+      }
+    }
+    if(y < mapChars.size()){
+      mapChars[y] = row;
+    }
+    else
+    {
+      mapChars.push_back(row);
+    }
+  }
+  return mapChars;
+}
+
 void display()
 {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
@@ -126,12 +184,17 @@ int main (int argc, char *argv[])
   */
 
   std::vector<std::string> mapChars;
-  mapChars = { "..YYY..Y.."
+  
+  mapChars = seed(mapChars, 100, 'Y', 40000.0f);
+  mapChars = seed(mapChars, 100, 'O', 5000.0f); // TODO: ja nevjem... random neimplementovany zaciatocny stav
+  //TODO: sem hodit po generovani nejake ohnisko v danom bode and watch the world burn
+/*  mapChars = { "..YYY..Y.."
               ,"..YY..YYY."
               ,".YY.X.Y..."
               ,"....YY...Y"
               ,".Y....Y..."
               };
+*/
 
   int64_t h = mapChars.size();
   int64_t w = mapChars[0].size();
