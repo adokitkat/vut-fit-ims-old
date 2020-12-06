@@ -6,6 +6,8 @@ using namespace std::chrono_literals;
 
 #define MAX_SIZE 800
 
+//TODO: zapalnost sa znizuje vzhladom na vzdialenost, nahodnejsia zapalnost, stav dohorene
+
 // Global variabiable map for callback GLUT function
 std::vector<std::vector<Cell>> map, newMap;
 int64_t h {0}, w {0};
@@ -396,7 +398,7 @@ void display()
 
   glutSwapBuffers();
   glutPostRedisplay();
-  std::this_thread::sleep_for(100ms);
+  //std::this_thread::sleep_for(1ms);
 }
 
 int main (int argc, char *argv[])
