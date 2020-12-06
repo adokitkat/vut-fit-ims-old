@@ -19,6 +19,8 @@ public:
   float density;
   std::vector<Cell> cells; // blob surface of active and inactive cells
   void fill_cell_blob(Cell cell);
+
+  //void printMap(std::vector<std::vector<Cell>>&);
 };
 
 CellBlob::CellBlob(std::vector<Cell> cells, float density)

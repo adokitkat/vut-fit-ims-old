@@ -16,8 +16,10 @@ enum struct Status
 
 enum struct CellType 
 {
+  Unknown,
   Dirt,
-  Tree
+  Tree,
+  Brush
 };
 
 class Cell {
@@ -34,20 +36,18 @@ public:
   bool    active       = false; // empty space or filled with fuel
   double  neigh_prob   = 0.0;
   double  height       = 0.0; // height of the cell imported from altitude map
-  double  flammability = DIRT;
+  double  flammability = 0.0;
 
   int64_t fuel_amount  = 0;
   int64_t burning_tick = 0;
 
   Status status = Status::NOT_BURNING;
-  CellType type = CellType::Dirt;
-
-  std::string getStatus();
+  CellType type = CellType::Unknown;
 
   char printCell();
 };
 
-Cell::Cell(int64_t, int64_t)
+Cell::Cell(int64_t x, int64_t y)
 {
   this->x = x;
   this->y = y;
@@ -67,29 +67,6 @@ Cell::Cell(int64_t x, int64_t y, bool active, double neigh_prob, double height, 
   this->type = type;
 }
 
-Cell::~Cell()
-{
-
-}
-
-#include "cell.hpp"
-
-std::string Cell::getStatus() {
-  switch (this->status)
-  {
-  case Status::NOT_BURNING:
-    return "O";
-    break;
-  
-  case Status::BURNING:
-    return "X";
-    break;
-  
-  default:
-    break;
-  }
-}
-
 char Cell::printCell() {
   switch (this->type)
   {
@@ -97,12 +74,24 @@ char Cell::printCell() {
       if (this->status == Status::NOT_BURNING) { return 'Y';}
       else if (this->status == Status::BURNING) { return 'X';}
       break;
+    
+    case CellType::Brush:
+      if (this->status == Status::NOT_BURNING) { return '@';}
+      else if (this->status == Status::BURNING) { return 'X';}
+      break;
+
+    case CellType::Unknown:
+      if (this->status == Status::NOT_BURNING) { return 'U';}
+      else if (this->status == Status::BURNING) { return 'X';}
+      break;
 
     case CellType::Dirt:
       return '.';
+      break;
     
     default:
       return 'Z';
       break;
   }
+  return 'E';
 }

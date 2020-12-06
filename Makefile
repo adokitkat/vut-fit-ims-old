@@ -12,7 +12,7 @@ BINDIR=
 LOGIN=11_xmlkvy00_xmudry01
 OUTPUT=ims
 
-.PHONY: all build build-debug release debug run
+.PHONY: all build build-debug release debug run run-terminal
 
 all: build-debug
 
@@ -28,4 +28,7 @@ debug: $(SRCDIR)main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUG) $(SRCDIR)main.cpp $(LIBS) -o $(BINDIR)$(OUTPUT)
 
 run:
+	./ims -g
+
+run-terminal:
 	./ims

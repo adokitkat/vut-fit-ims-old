@@ -1,39 +1,25 @@
-#include <iostream>
-#include <string>
-
 #include <GL/glut.h>
-#include "cell_blob.hpp"
-#include <vector>
-#include <thread>
-#include <chrono>
+//#include "cell_blob.hpp"
+#include "map.hpp"
 
 using namespace std::chrono_literals;
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__) // Windows
-    #define NEWLINE "\r\n"
-    #include <windows.h> 
-#else
-    #define NEWLINE '\n' // Avoid std::endl because of proper buffering and flushing
-#endif
-
 #define MAX_SIZE 800
 
-/*
-void init()
-{   
-    //glViewport(0, 0, MAX_SIZE, MAX_SIZE);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
-}
-*/
+// Global variabiable map for callback GLUT function
+std::vector<std::vector<Cell>> map, newMap;
+int64_t h {0}, w {0};
 
 float pseudo_rand()
 {
   return (float)rand()/13376.9f;  
 }
 
+float rand_mod_100()
+{
+  srand(time(NULL));
+  return rand() % 100;
+}
 
 /*
 void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
@@ -58,33 +44,69 @@ void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
 }
 */
 
-  /**
-   * @brief:  function for generating cell of given type into map or the map itself; 
-   *          to generate empty map --> _seed = 0.0f or type = default);
-   *          to empty already generated map of given size --> _seed = 999999.0f and type = deafault;
-   * 
-   * @size: sizeXsize map matrix to generate; needs declaration of size even if its generated; can enlarge the map (not shrink);
-   * @type: which seed to "plant" 
-   * @_seed: 10000 <= _seed: less dense; 100000 >= _seed: more dense;
-   * 
-   * 
-   */
-  //TODO: FOR NOW CELLS ARE TYPE OF CHAR!!! THEY NEED THE TYPE OF CELL AND SOME GOOD ATRIBUTE FILLING BOI!!!
-std::vector<std::string> seed(std::vector<std::string> mapChars, int size = MAX_SIZE, char type = '.', float _seed = 40000.0f)
+void PerlinNoise2D(int nWidth, int nHeight, float *fSeed, int nOctaves, float fBias, float *fOutput)
+	{
+		// Used 1D Perlin Noise
+		for (int x = 0; x < nWidth; x++)
+			for (int y = 0; y < nHeight; y++)
+			{				
+				float fNoise = 0.0f;
+				float fScaleAcc = 0.0f;
+				float fScale = 1.0f;
+
+				for (int o = 0; o < nOctaves; o++)
+				{
+					int nPitch = nWidth >> o;
+					int nSampleX1 = (x / nPitch) * nPitch;
+					int nSampleY1 = (y / nPitch) * nPitch;
+					
+					int nSampleX2 = (nSampleX1 + nPitch) % nWidth;					
+					int nSampleY2 = (nSampleY1 + nPitch) % nWidth;
+
+					float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
+					float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
+
+					float fSampleT = (1.0f - fBlendX) * fSeed[nSampleY1 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY1 * nWidth + nSampleX2];
+					float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY2 * nWidth + nSampleX2];
+
+					fScaleAcc += fScale;
+					fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
+					fScale = fScale / fBias;
+				}
+
+				// Scale to seed range
+				fOutput[y * nWidth + x] = fNoise / fScaleAcc;
+			}
+	
+	}
+
+/**
+ * @brief:  function for generating cell of given type into map or the map itself; 
+ *          to generate empty map --> _seed = 0.0f or type = default);
+ *          to empty already generated map of given size --> _seed = 999999.0f and type = deafault;
+ * 
+ * @size: sizeXsize map matrix to generate; needs declaration of size even if its generated; can enlarge the map (not shrink);
+ * @type: which seed to "plant" 
+ * @_seed: 10000 <= _seed: less dense; 100000 >= _seed: more dense;
+ * 
+ */
+//TODO: FOR NOW CELLS ARE TYPE OF CHAR!!! THEY NEED THE TYPE OF CELL AND SOME GOOD ATRIBUTE FILLING BOI!!!
+std::vector<std::string> seed(std::vector<std::string> mapChars, int64_t size = MAX_SIZE, char type = '.', float _seed = 40000.0f)
 {
-  for(int y = 0; y < size; y++)
+  //PerlinNoise2D(size, size, fNoiseSeed2D, nOctaveCount, fScalingBias, fPerlinNoise2D);
+  for(auto y = 0; y < size; y++)
   {
     std::string row;
     //std::cout << " halo:" << mapChars.size() << "\n";
-    if(y < mapChars.size()){
+    if(y < (int64_t)mapChars.size()){
       row = mapChars[y];
     }
-    for(int x = 0; x < size; x++)
+    for(auto x = 0; x < size; x++)
     {
       std::cout << pseudo_rand() << " seed:" << _seed << "\n";
       if( pseudo_rand() < _seed)
       {
-        if(x < row.size())
+        if(x < (int64_t)row.size())
         {
           row[x] = type; //TODO: i am active cell of this type... fill my atributes daddy
         }
@@ -95,7 +117,7 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int size = MAX_
       }
       else
       {
-        if(x < row.size())
+        if(x < (int64_t)row.size())
         {
           continue;
         }
@@ -105,7 +127,7 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int size = MAX_
         }
       }
     }
-    if(y < mapChars.size()){
+    if(y < (int64_t)mapChars.size()){
       mapChars[y] = row;
     }
     else
@@ -116,8 +138,171 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int size = MAX_
   return mapChars;
 }
 
+int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vector<Cell>>& newMap, int64_t i, int64_t j, Wind wDirection = Wind::None, int64_t radius = 2, int64_t k = 1, int64_t big_wind = 3)
+{
+  int64_t h = map.size(),
+          w = map[0].size();
+  
+  int64_t a {-1*radius}, b {1*radius},
+          c {-1*radius}, d {1*radius};
+
+  switch(wDirection) {
+    case Wind::N:
+      //if (k != 1)
+      //  { a += 1; } // 1*a-(k-a)
+      a += 1; b += 1*k;
+      c += 0; d += 0;
+      if (k >= big_wind) { a = radius; }
+      break;
+
+    case Wind::NW:
+      a += 1;  b += 1*k;
+      c += 1;  d += 1*k;
+      if (k >= big_wind) { a = radius; c = radius; }
+      break;
+
+    case Wind::W:
+      a += 0;  b += 0;
+      c += 1;  d += 1*k;
+      if (k >= big_wind) { c = radius; }
+      break;
+
+    case Wind::SW:
+      a += -1*k; b += -1;
+      c += 1;    d += 1*k;
+      if (k >= big_wind) { b = -radius; c = radius; }
+      break;
+    
+    case Wind::S:
+      a += -1*k; b += -1;
+      c += 0;    d += 0;
+      if (k >= big_wind) { b = -radius; }
+      break;
+
+    case Wind::SE:
+      a += -1*k; b += -1;
+      c += -1*k; d += -1;
+      if (k >= big_wind) { b = -radius; d = -radius; }
+      break;
+
+    case Wind::E:
+      a += 0;    b += 0;
+      c += -1*k; d += -1;
+      if (k >= big_wind) { d = -radius; }
+      break;
+
+    case Wind::NE:
+      a += 1;    b += 1*k;
+      c += -1*k; d += -1;
+      if (k >= big_wind) { a = radius; d = -radius; }
+      break;
+    
+    default:
+      break;
+  }
+
+  for (auto x = (i + a); x <= (i + b); ++x) 
+  {
+    for (auto y = (j + c); y <= (j + d); ++y)
+    {
+      if (x == i and y == j) { continue; }
+
+      if (x >= 0 and x < h and y >= 0 and y < w)
+      {
+        switch (map[x][y].status) // Neighbor status
+        {
+          case Status::NOT_BURNING:
+            //map[i][j] ; // Current Cell
+            break;
+          
+          case Status::BURNING:
+            
+            switch(map[i][j].type) { // My type
+              case CellType::Tree:  // My type == Tree
+            
+                if (newMap[i][j].status == Status::NOT_BURNING) // My status
+                {
+                  switch (map[x][y].type) // Neighbor type
+                  {
+                    case CellType::Tree:
+                      newMap[i][j].flammability += 0.1; // TODO: range
+                      break;
+                    
+                    case CellType::Brush:
+                      newMap[i][j].flammability += 0.0625; // TODO: range
+                      break;
+                    
+                    default:
+                      break;
+                  }
+                } 
+                break;
+
+              case CellType::Brush: // My type == Brush
+                if (newMap[i][j].status == Status::NOT_BURNING) // My status
+                {
+                  switch (map[x][y].type) // Neighbor type
+                  {
+                    case CellType::Tree:
+                      newMap[i][j].flammability += 0.1; // TODO: range
+                      break;
+                      
+                    case CellType::Brush:
+                      newMap[i][j].flammability += 0.125; // TODO: range
+                      break;
+                      
+                    default:
+                      break;
+                  }
+                }
+                break;
+
+                default:
+                  break;
+            }
+            
+            // 
+
+            break;
+
+          case Status::BURNED:
+            break;
+          
+          default:
+            break;
+        }        
+      }
+    }
+  }
+  return 0;
+}
+
+int updateMapStatus(std::vector<std::vector<Cell>>& map)
+{
+  int64_t h = map.size(),
+          w = map[0].size();
+  
+  for (int64_t i = 0; i < h; ++i)
+  {
+    for (int64_t j = 0; j < w; ++j)
+    {
+      //std::cout << rand_mod_100() << std::endl;
+      if (map[i][j].flammability > 0.6)//* 100 >= rand_mod_100())
+      {
+        
+        //std::cout << "YES" << std::endl;
+
+        map[i][j].status = Status::BURNING;
+      }
+
+    }
+  }
+  return 0;
+}
+
 void display()
 {
+  /*
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
   glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
     
@@ -131,132 +316,135 @@ void display()
   glEnd();
     
   glFlush();  // Render now
-}
+*/
 
-int getNeighbor(const std::vector<std::vector<Cell>>& map, std::vector<std::vector<Cell>>& newMap, int64_t i, int64_t j)
-{
-  int64_t h = map.size(),
-          w = map[0].size();
+  GLfloat minSize = 60.0f/map.size();
+  //GLfloat greenIncrement = 0.5f/deathTime;
   
-  for (auto x = (i - 1); x <= (i + 1); ++x) 
-  {
-    for (auto y = (j - 1); y <= (j + 1); ++y) 
-    {
-      if (x == i and y == j) { continue; }
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, 60, 60, 0.0, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glViewport(0, 0, 800, 800);
 
-      if (x >= 0 and x < h and y >= 0 and y < w)
-      {
-        switch (map[x][y].status)
-        {
-          case Status::NOT_BURNING:
-            //map[i][j] ; // Current Cell
-            break;
-          
-          case Status::BURNING:
-            if (map[i][j].type == CellType::Tree) {
-              newMap[i][j].status = Status::BURNING;
-            }
-            
-            break;
-
-          case Status::BURNED:
-            break;
-          
-          default:
-            break;
-        }        
-      }
+  // Update data of every cell on map
+  for (int64_t i = 0; i < h; ++i) {
+    for (int64_t j = 0; j < w; ++j) {
+      updateCell(map, newMap, i, j, Wind::SW);
     }
   }
+  // Update status of every cell
+  updateMapStatus(newMap);
+  map = newMap;
+
+  for (auto [i, line] : enumerate(map))
+  {
+    for (auto [j, c]: enumerate(line))
+    {
+      switch(c.status) {
+        case Status::NOT_BURNING:
+          if (c.type == CellType::Tree) {
+            // light green
+            glColor3f(0.0f, 0.8f, 0.0f);
+          }
+          else if (c.type == CellType::Brush) {
+            // dark green 
+            glColor3f(0.4f, 0.8f, 0.4f);
+          }
+          else if (c.type == CellType::Dirt) {
+            // brown
+            glColor3f(0.7f, 0.6f, 0.4f);
+          }
+          
+          break;
+
+        case Status::BURNING:
+          // red
+          glColor3f(0.8f, 0.0f, 0.0f);
+          break;
+
+        case Status::BURNED:
+          // gray
+          glColor3f(0.5f, 0.5f, 0.5f);
+          break;
+        
+        default:
+          break;
+      }
+
+      glBegin(GL_QUADS); // 2x2 pixels
+        glVertex2f(0.0f+minSize*j,     0.0f+minSize*i);
+        glVertex2f(0.0f+minSize*(j+1), 0.0f+minSize*i);
+        glVertex2f(0.0f+minSize*(j+1), 0.0f+minSize*(i+1));
+        glVertex2f(0.0f+minSize*j,     0.0f+minSize*(i+1));
+      glEnd();
+    }
+  }
+
+  glutSwapBuffers();
+  glutPostRedisplay();
+  std::this_thread::sleep_for(1s);
 }
 
 int main (int argc, char *argv[])
 {
-  /*
-  // init(); // no need cause GLUT is black magic
-  glutInit(&argc, argv);
-  //glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowPosition(0, 0);
-  glutInitWindowSize(MAX_SIZE, MAX_SIZE);
-  glutCreateWindow("IMS");
-  glutDisplayFunc(display);
-  glutMainLoop();
-  */
 
+  // Variables init
+  bool  gui {false},
+        show_help {false};
+  // Parses arguments, fills variables with values
+  parseArgs(argc, argv, gui, show_help);
+
+  if (show_help) { showHelp(); exit(EXIT_SUCCESS); }
+
+  srand(time(NULL));
   std::vector<std::string> mapChars;
-  
-  mapChars = seed(mapChars, 100, 'Y', 40000.0f);
-  mapChars = seed(mapChars, 100, 'O', 5000.0f); // TODO: ja nevjem... random neimplementovany zaciatocny stav
+  mapChars = seed(mapChars, 100, '@', 40000.0f);
+  mapChars = seed(mapChars, 100, 'Y', 20000.0f); // TODO: ja nevjem... random neimplementovany zaciatocny stav
   //TODO: sem hodit po generovani nejake ohnisko v danom bode and watch the world burn
-/*  mapChars = { "..YYY..Y.."
-              ,"..YY..YYY."
-              ,".YY.X.Y..."
-              ,"....YY...Y"
-              ,".Y....Y..."
-              };
+  mapChars[50][50] = 'X';
+/*
+  mapChars = {".YY.Y.Y...",
+              ".@...Y....",
+              "......Y...",
+              "YYY@Y.Y.Y.",
+              "Y.Y...Y..Y",
+              ".....XYY..",
+              ".Y....Y..Y",
+              "Y.Y...YY..",
+              "...Y......",
+              "....Y.Y@.Y" };
 */
-
-  int64_t h = mapChars.size();
-  int64_t w = mapChars[0].size();
-
-  std::vector<std::vector<Cell>> map, newMap;
-  
-  for (int64_t i = 0; i < h; ++i){
-    std::vector<Cell> vec {};
-    for (int64_t j = 0; j < w; ++j) {
-      vec.push_back(Cell(i, j));
-      switch (mapChars[i][j])
-      {
-        case 'X':
-          vec[j].status = Status::BURNING;
-          vec[j].type = CellType::Tree;
-          break;
-
-        case 'Y':
-          vec[j].status = Status::NOT_BURNING;
-          vec[j].type = CellType::Tree;
-          break;
-
-        case '.':
-          vec[j].status = Status::NOT_BURNING;
-          vec[j].type = CellType::Dirt;
-          break;
-
-        default:
-          break;
-      }
-    }
-    map.push_back(vec);
-  }
-
+  std::tie(h, w) = loadMap(map, mapChars);
   newMap = map;
 
-  bool running {false};
-
-  while (true)
-  {
-    // Print the map
-    for (auto& line : map) {
-      for (auto& c : line) {
-        std::cout << c.printCell();
-      }
-      std::cout << NEWLINE; 
-    }
-    std::cout << std::endl;
-
-    for (int64_t i = 0; i < h; ++i)
-    {
-      for (int64_t j = 0; j < w; ++j)
-      {
-        
-        getNeighbor(map, newMap, i, j);
-
-      }
-    }
-
-    map = newMap;
-    std::this_thread::sleep_for(1s);
+  if (gui) {
+    glutInit(&argc, argv);
+    //glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowPosition(0, 0);
+    glutInitWindowSize(MAX_SIZE, MAX_SIZE);
+    glutCreateWindow("IMS");
+    glutDisplayFunc(display);
+    glutMainLoop();
   }
-
+  else {
+    //bool running {false};
+    while (true)
+    {
+      // Print the map
+      printMap(map);
+      // Update data of every cell on map
+      for (int64_t i = 0; i < h; ++i) {
+        for (int64_t j = 0; j < w; ++j) {
+          updateCell(map, newMap, i, j, Wind::SW);
+        }
+      }
+      // Update status of every cell
+      updateMapStatus(newMap);
+      map = newMap;
+      std::this_thread::sleep_for(1s);
+    }
+  }
   exit(EXIT_SUCCESS);
 }
