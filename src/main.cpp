@@ -4,7 +4,7 @@
 
 using namespace std::chrono_literals;
 
-#define MAX_SIZE 800
+#define MAX_SIZE 1000
 
 //TODO: zapalnost sa znizuje vzhladom na vzdialenost, nahodnejsia zapalnost, stav dohorene
 
@@ -340,7 +340,7 @@ void display()
   glOrtho(0.0, 60, 60, 0.0, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glViewport(0, 0, 800, 800);
+  glViewport(0, 0, MAX_SIZE, MAX_SIZE);
 
   // Update data of every cell on map
   for (int64_t i = 0; i < h; ++i) {
