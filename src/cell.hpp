@@ -47,6 +47,8 @@ public:
   char printCell();
 };
 
+Cell::~Cell() {}
+
 Cell::Cell(int64_t x, int64_t y)
 {
   this->x = x;
@@ -66,6 +68,8 @@ Cell::Cell(int64_t x, int64_t y, bool active, double neigh_prob, double height, 
   this->status = status;
   this->type = type;
 }
+
+
 
 char Cell::printCell() {
   switch (this->type)

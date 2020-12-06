@@ -44,7 +44,7 @@ void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
 }
 */
 
-void PerlinNoise2D(int nWidth, int nHeight, float *fSeed, int nOctaves, float fBias, float *fOutput)
+void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
 	{
 		// Used 1D Perlin Noise
 		for (int x = 0; x < nWidth; x++)
@@ -75,7 +75,7 @@ void PerlinNoise2D(int nWidth, int nHeight, float *fSeed, int nOctaves, float fB
 				}
 
 				// Scale to seed range
-				fOutput[y * nWidth + x] = fNoise / fScaleAcc;
+				fOutput[y * nWidth + x] = fNoise / fScaleAcc; // FIXME: segfault
 			}
 	
 	}
@@ -93,7 +93,16 @@ void PerlinNoise2D(int nWidth, int nHeight, float *fSeed, int nOctaves, float fB
 //TODO: FOR NOW CELLS ARE TYPE OF CHAR!!! THEY NEED THE TYPE OF CELL AND SOME GOOD ATRIBUTE FILLING BOI!!!
 std::vector<std::string> seed(std::vector<std::string> mapChars, int64_t size = MAX_SIZE, char type = '.', float _seed = 40000.0f)
 {
-  //PerlinNoise2D(size, size, fNoiseSeed2D, nOctaveCount, fScalingBias, fPerlinNoise2D);
+  float *noise_seed = new float[size*size];
+  float *out_seed   = new float[size*size];
+
+  for (int i = 0; i < size * size; i++) {
+    //std::cout << "" << std::endl;
+    noise_seed[i] = pseudo_rand();
+  }
+  PerlinNoise2D(size, size, noise_seed, 6, 0.4f, out_seed);
+  
+  //for (auto x : out_seed) {}
   for(auto y = 0; y < size; y++)
   {
     std::string row;
@@ -103,8 +112,9 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int64_t size = 
     }
     for(auto x = 0; x < size; x++)
     {
-      std::cout << pseudo_rand() << " seed:" << _seed << "\n";
-      if( pseudo_rand() < _seed)
+      //std::cout << pseudo_rand() << " seed:" << _seed << "\n";
+      //std::cout << (int)(out_seed[y * size + x] * 0.6f) << "\n";
+      if( (int)(out_seed[y * size + x] * 0.5f) < _seed && pseudo_rand() < _seed + 10000.0f)
       {
         if(x < (int64_t)row.size())
         {
@@ -135,6 +145,8 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int64_t size = 
       mapChars.push_back(row);
     }
   }
+  delete(noise_seed);
+  delete(out_seed);
   return mapChars;
 }
 
@@ -331,7 +343,7 @@ void display()
   // Update data of every cell on map
   for (int64_t i = 0; i < h; ++i) {
     for (int64_t j = 0; j < w; ++j) {
-      updateCell(map, newMap, i, j, Wind::SW);
+      updateCell(map, newMap, i, j, Wind::N);
     }
   }
   // Update status of every cell
@@ -384,7 +396,7 @@ void display()
 
   glutSwapBuffers();
   glutPostRedisplay();
-  std::this_thread::sleep_for(1s);
+  std::this_thread::sleep_for(100ms);
 }
 
 int main (int argc, char *argv[])
@@ -400,10 +412,10 @@ int main (int argc, char *argv[])
 
   srand(time(NULL));
   std::vector<std::string> mapChars;
-  mapChars = seed(mapChars, 100, '@', 40000.0f);
-  mapChars = seed(mapChars, 100, 'Y', 20000.0f); // TODO: ja nevjem... random neimplementovany zaciatocny stav
+  mapChars = seed(mapChars, 1000, '@', 40000.0f);
+  mapChars = seed(mapChars, 1000, 'Y', 52000.0f); // seed (40000,55000)
   //TODO: sem hodit po generovani nejake ohnisko v danom bode and watch the world burn
-  mapChars[50][50] = 'X';
+  mapChars[500][500] = 'X';
 /*
   mapChars = {".YY.Y.Y...",
               ".@...Y....",
@@ -437,7 +449,7 @@ int main (int argc, char *argv[])
       // Update data of every cell on map
       for (int64_t i = 0; i < h; ++i) {
         for (int64_t j = 0; j < w; ++j) {
-          updateCell(map, newMap, i, j, Wind::SW);
+          updateCell(map, newMap, i, j, Wind::N);
         }
       }
       // Update status of every cell

@@ -12,7 +12,7 @@ BINDIR=
 LOGIN=11_xmlkvy00_xmudry01
 OUTPUT=ims
 
-.PHONY: all build build-debug release debug run run-terminal
+.PHONY: all build build-debug release debug run run-terminal build-run
 
 all: build-debug
 
@@ -32,3 +32,5 @@ run:
 
 run-terminal:
 	./ims
+
+build-run: all run
