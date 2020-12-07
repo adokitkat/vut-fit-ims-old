@@ -321,7 +321,7 @@ namespace Map {
           << tick << " " << getWindDirection() << " " << not_burning+burning+burned << " " << not_burning << " " << burning << " " << burned << " " << burning+burned  
           << " " << not_burning_tree << " " << burning_tree << " " << burned_tree << " " << burning_tree+burned_tree
           << " " << not_burning_brush << " " << burning_brush << " " << burned_brush << " " << burning_brush+burned_brush
-          << k_global << std::endl;
+          << " " << k_global << std::endl;
       }
     }
     ++tick;

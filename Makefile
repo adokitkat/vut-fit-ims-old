@@ -28,10 +28,7 @@ debug: $(SRCDIR)main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUG) $(SRCDIR)main.cpp $(LIBS) -o $(BINDIR)$(OUTPUT)
 
 run:
-	./ims -g -x 400 -y 400 -w se -i 2
-
-run-terminal:
-	./ims
+	./ims $(ARGS)
 
 build-run: all run
 
