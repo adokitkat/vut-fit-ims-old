@@ -1,0 +1,39 @@
+\begin{thebibliography}{1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\selectlanguage}[1]{\relax}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem{fireSpread}
+Andrews, P.~L.: The Rothermel Surface Fire Spread Model and Associated
+  Developments: A Comprehensive Explanation. [online], [vid.~2020-12-06].
+\newline\urlprefix\url{https://www.fs.fed.us/rm/pubs\_series/rmrs/gtr/rmrs\_gtr371.pdf}
+
+\bibitem{CAmodel4FF}
+Bafas, A. A. D. V. C. S.~G.: A cellular automata model for forest fire spread
+  prediction: The case of the wildfire that swept through Spetses Island in
+  1990. [online], [Applied Mathematics and Computation 204 (2008) 191–201],
+  [vid.~2020-12-06].
+\newline\urlprefix\url{https://doi.org/10.1016/j.amc.2008.06.046}
+
+\bibitem{Pnoise}
+Javidx9: What Is Perlin Noise? [online], [vid.~2020-12-05].
+\newline\urlprefix\url{https://github.com/OneLoneCoder/videos/blob/master/
+  OneLoneCoder\_PerlinNoise.cpp}
+
+\bibitem{konceptModel}
+PERINGER, P.: Modelování a simulace. [online], [vid.~2020-12-05].
+\newline\urlprefix\url{http://www.fit.vutbr.cz/study/courses/IMS/public/prednasky/IMS.pdf}
+
+\bibitem{simulations}
+S.~Di~Gregorio, E.~B.: Simulations of Forest Fires by the Cellular Automata
+  Model. [online], [vid.~2020-12-06].
+\newline\urlprefix\url{https://www.researchgate.net/publication/
+  253486190\_Simulations\_of\_
+  Forest\_Fires\_by\_the\_Cellular\_Automata\_Model}
+
+\end{thebibliography}

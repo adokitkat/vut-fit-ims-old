@@ -12,9 +12,9 @@ BINDIR=
 LOGIN=11_xmlkvy00_xmudry01
 OUTPUT=ims
 
-.PHONY: all build build-debug release debug run run-terminal build-run doc
+.PHONY: all build build-debug release debug run run-terminal build-run doc zip
 
-all: build-debug
+all: build
 
 # Building the program
 build: release
@@ -28,7 +28,7 @@ debug: $(SRCDIR)main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUG) $(SRCDIR)main.cpp $(LIBS) -o $(BINDIR)$(OUTPUT)
 
 run:
-	./ims -g
+	./ims -g -x 400 -y 400 -w se -i 2
 
 run-terminal:
 	./ims
@@ -39,3 +39,6 @@ build-run: all run
 doc: $(DOCDIR)main.tex $(DOCDIR)manual.bib $(DOCDIR)czechiso.bst
 	cd $(DOCDIR) && latexmk -pdf main.tex && latexmk -c
 	mv $(DOCDIR)main.pdf dokumentacia.pdf
+
+zip:
+	zip -r $(LOGIN).zip Makefile dokumentacia.pdf src/*

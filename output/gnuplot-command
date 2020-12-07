@@ -1,0 +1,122 @@
+// wind none 1
+plot "output/input_1500_ticks/output_none_1.txt" using 1:4  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:4  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:4  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:8  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:8  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:8  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:12 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:12 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:12 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_none_1.txt" using 1:5  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:5  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:5  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:9  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:9  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:9  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:13 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:13 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:13 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_none_1.txt" using 1:6  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:6  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:6  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:10  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:10  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:10  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:14 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:14 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:14 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_none_1.txt" using 1:7  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:7  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:7  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:11  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:11  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:11  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_none_1.txt" using 1:15 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_none_2.txt" using 1:15 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_none_3.txt" using 1:15 title "N3 brushes" lt rgb "#000044" w linespoints
+
+// wind 1
+plot "output/input_1500_ticks/output_se1_1.txt" using 1:4  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:4  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:4  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:8  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:8  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:8  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:12 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:12 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:12 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se1_1.txt" using 1:5  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:5  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:5  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:9  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:9  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:9  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:13 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:13 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:13 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se1_1.txt" using 1:6  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:6  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:6  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:10  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:10  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:10  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:14 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:14 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:14 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se1_1.txt" using 1:7  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:7  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:7  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:11  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:11  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:11  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se1_1.txt" using 1:15 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se1_2.txt" using 1:15 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se1_3.txt" using 1:15 title "N3 brushes" lt rgb "#000044" w linespoints
+
+// wind 3
+plot "output/input_1500_ticks/output_se3_1.txt" using 1:4  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:4  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:4  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:8  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:8  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:8  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:12 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:12 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:12 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se3_1.txt" using 1:5  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:5  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:5  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:9  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:9  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:9  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:13 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:13 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:13 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se3_1.txt" using 1:6  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:6  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:6  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:10  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:10  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:10  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:14 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:14 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:14 title "N3 brushes" lt rgb "#000044" w linespoints
+
+plot "output/input_1500_ticks/output_se3_1.txt" using 1:7  title "N1 all" lt rgb "#00FF00" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:7  title "N2 all" lt rgb "#008800" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:7  title "N3 all" lt rgb "#004400" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:11  title "N1 trees" lt rgb "#FF0000" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:11  title "N2 trees" lt rgb "#880000" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:11  title "N3 trees" lt rgb "#440000" w linespoints, \
+     "output/input_1500_ticks/output_se3_1.txt" using 1:15 title "N1 brushes" lt rgb "#0000FF" w linespoints, \
+     "output/input_1500_ticks/output_se3_2.txt" using 1:15 title "N2 brushes" lt rgb "#000088" w linespoints, \
+     "output/input_1500_ticks/output_se3_3.txt" using 1:15 title "N3 brushes" lt rgb "#000044" w linespoints

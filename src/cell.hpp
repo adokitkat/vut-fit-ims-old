@@ -44,7 +44,9 @@ public:
   Status status = Status::NOT_BURNING;
   CellType type = CellType::Unknown;
 
-  char printCell();
+  char cellStatusChar();
+
+  void igniteCellRadius(std::vector<std::vector<Cell>>&, int64_t, int64_t, int64_t);
 };
 
 Cell::~Cell() {}
@@ -71,7 +73,7 @@ Cell::Cell(int64_t x, int64_t y, bool active, double neigh_prob, double height, 
 
 
 
-char Cell::printCell() {
+char Cell::cellStatusChar() {
   switch (this->type)
   {
     case CellType::Tree:
