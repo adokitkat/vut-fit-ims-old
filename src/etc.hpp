@@ -59,11 +59,12 @@ void showHelp()
 }
 
 // Argument parsing
-void parseArgs(int& argc, char* argv[], bool& gui, bool& show_help)
+void parseArgs(int& argc, char* argv[], bool& gui, bool& show_help, bool& load_map)
 {  
   const struct option long_options[] =
   {
     {"gui",     no_argument, nullptr, 'g'},
+    {"help",    no_argument, nullptr, 'h'},
     {"help",    no_argument, nullptr, 'h'},
     {nullptr,   no_argument, nullptr, 0}
   };

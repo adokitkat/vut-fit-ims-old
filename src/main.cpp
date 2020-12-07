@@ -1,16 +1,31 @@
 #include <GL/glut.h>
 //#include "cell_blob.hpp"
 #include "map.hpp"
+#include <execution>
 
 using namespace std::chrono_literals;
-
-#define MAX_SIZE 1000
 
 //TODO: zapalnost sa znizuje vzhladom na vzdialenost, nahodnejsia zapalnost, stav dohorene
 
 // Global variabiable map for callback GLUT function
-std::vector<std::vector<Cell>> map, newMap;
-int64_t h {0}, w {0};
+std::vector<std::vector<Cell>>  map,
+                                newMap;
+int64_t MAX_SIZE {1000},
+        h {0},
+        w {0},
+        radius_global {2}, // Radius of spread
+        k_global {1}, // Wind speed
+        big_wind_global {3}, // Wind speed treshold
+        tree_burning_time {162},
+        brush_burning_time {100};
+Wind wind { Wind::None };
+int64_t tick {0};
+
+// Mouse events
+bool  leftMouseButtonDown { false },
+      rightMouseButtonDown { false };
+int64_t mouseXPos {0},
+        mouseYPos {0};
 
 float pseudo_rand()
 {
@@ -19,32 +34,8 @@ float pseudo_rand()
 
 float rand_mod_100()
 {
-  srand(time(NULL));
-  return rand() % 100;
+  return static_cast<int>((float)rand()/4857.0f) % 100;
 }
-
-/*
-void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
-{
-  for(int y = 0; y < MAX_SIZE; y++)
-  {
-    for(int x = 0; x < MAX_SIZE; x++)
-    {
-      if( pseudo_rand() < _seed) cell_blob.fill_cell_blob();
-    }
-  }
-}
-*/
-
-/*
-void seed(float _seed = 0.05f, CellBlob::CellBlob cell_blob)
-{
-  for(int i = 0; i < cell_blob.cells.size(); x++)
-  {
-    if( pseudo_rand() < _seed) cell_blob.cells[i].active = true;
-  }
-}
-*/
 
 void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
 	{
@@ -77,7 +68,7 @@ void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fB
 				}
 
 				// Scale to seed range
-				fOutput[y * nWidth + x] = fNoise / fScaleAcc; // FIXME: segfault
+				fOutput[y * nWidth + x] = fNoise / fScaleAcc;
 			}
 	
 	}
@@ -98,20 +89,15 @@ std::vector<std::string> seed(std::vector<std::string> mapChars, int64_t size = 
   float *noise_seed = new float[size*size];
   float *out_seed   = new float[size*size];
 
-  for (int i = 0; i < size * size; i++) {
-    //std::cout << "" << std::endl;
-    noise_seed[i] = pseudo_rand();
-  }
+  for (int i = 0; i < size * size; i++)
+    { noise_seed[i] = pseudo_rand(); }
   PerlinNoise2D(size, size, noise_seed, 6, 0.4f, out_seed);
   
   //for (auto x : out_seed) {}
   for(auto y = 0; y < size; y++)
   {
     std::string row;
-    //std::cout << " halo:" << mapChars.size() << "\n";
-    if(y < (int64_t)mapChars.size()){
-      row = mapChars[y];
-    }
+    if(y < (int64_t)mapChars.size()) { row = mapChars[y]; }
     for(auto x = 0; x < size; x++)
     {
       //std::cout << pseudo_rand() << " seed:" << _seed << "\n";
@@ -215,6 +201,10 @@ int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vecto
       break;
   }
 
+  int64_t distance {1};
+  int64_t abs_x {0},
+          abs_y {0};
+
   for (auto x = (i + a); x <= (i + b); ++x) 
   {
     for (auto y = (j + c); y <= (j + d); ++y)
@@ -223,6 +213,17 @@ int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vecto
 
       if (x >= 0 and x < h and y >= 0 and y < w)
       {
+        distance = 1;
+        abs_x = abs(i-x);
+        abs_y = abs(j-y);
+        if (abs_x > radius/2 or abs_y > radius/2) {
+          if (abs_x > abs_y) {
+            distance = abs_x;
+          } else {
+            distance = abs_y;
+          }
+        }
+
         switch (map[x][y].status) // Neighbor status
         {
           case Status::NOT_BURNING:
@@ -239,11 +240,11 @@ int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vecto
                   switch (map[x][y].type) // Neighbor type
                   {
                     case CellType::Tree:
-                      newMap[i][j].flammability += 0.1; // TODO: range
+                      newMap[i][j].flammability += std::pow(0.1, distance); // TODO: range
                       break;
                     
                     case CellType::Brush:
-                      newMap[i][j].flammability += 0.0625; // TODO: range
+                      newMap[i][j].flammability += std::pow(0.08, distance); // TODO: range
                       break;
                     
                     default:
@@ -258,11 +259,11 @@ int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vecto
                   switch (map[x][y].type) // Neighbor type
                   {
                     case CellType::Tree:
-                      newMap[i][j].flammability += 0.1; // TODO: range
+                      newMap[i][j].flammability += std::pow(0.1, distance); // TODO: range
                       break;
                       
                     case CellType::Brush:
-                      newMap[i][j].flammability += 0.125; // TODO: range
+                      newMap[i][j].flammability += std::pow(0.12, distance); // TODO: range
                       break;
                       
                     default:
@@ -284,57 +285,117 @@ int updateCell(const std::vector<std::vector<Cell>>& map, std::vector<std::vecto
           
           default:
             break;
-        }        
+        }
+        //if(newMap[x][y].flammability > 0.3) { std::cout << map[x][y].flammability << " " << newMap[x][y].flammability << NEWLINE; }
       }
     }
   }
   return 0;
+}
+
+void updateCellFunc(std::vector<std::vector<Cell>>&map, std::vector<std::vector<Cell>>& newMap)
+{
+  //#pragma omp parallel for
+  for (int64_t i = 0; i < h; ++i) {
+    for (int64_t j = 0; j < w; ++j) {
+      updateCell(map, newMap, i, j, wind, radius_global, k_global, big_wind_global);
+    }
+  }
+
+  //std::cout << std::endl;
+  
+/*
+  std::vector<std::string> foo;
+  std::for_each(
+    std::execution::par_unseq,
+    map.begin(), map.end(),
+    [](auto&& item)
+    {
+        //do stuff with item
+    });
+*/
 }
 
 int updateMapStatus(std::vector<std::vector<Cell>>& map)
 {
   int64_t h = map.size(),
           w = map[0].size();
+  float rand;
   
   for (int64_t i = 0; i < h; ++i)
   {
     for (int64_t j = 0; j < w; ++j)
     {
-      //std::cout << rand_mod_100() << std::endl;
-      if (map[i][j].flammability > 0.6)//* 100 >= rand_mod_100())
-      {
-        
-        //std::cout << "YES" << std::endl;
+      switch(map[i][j].status) {
+        case Status::BURNING:
+          if (map[i][j].type == CellType::Tree)
+          {
+            if (map[i][j].burning_tick >= tree_burning_time)
+              { map[i][j].status = Status::BURNED; }
+          }
+          else if (map[i][j].type == CellType::Brush)
+          {
+            if (map[i][j].burning_tick >= brush_burning_time)
+              { map[i][j].status = Status::BURNED; }
+          }
 
-        map[i][j].status = Status::BURNING;
+          ++map[i][j].burning_tick;
+          break;
+
+        case Status::NOT_BURNING:
+          rand = rand_mod_100();
+          if (map[i][j].flammability*100 > rand)//* 100 >= rand_mod_100())
+          {
+            map[i][j].status = Status::BURNING;
+          }
+          break;
+
+        default:
+          break;
       }
-
+      map[i][j].flammability = 0.0;
     }
   }
+  ++tick;
+  if (tick % 100 == 0) std::cout << tick << std::endl;
   return 0;
+}
+
+void igniteCell(std::vector<std::vector<Cell>>& map, int64_t i, int64_t j) {
+  
+  for (auto x = (i - 3); x <= (i + 3); ++x) 
+  {
+    for (auto y = (j - 3); y <= (j + 3); ++y)
+    {
+      if (x == i and y == j) { continue; }
+
+      if (x >= 0 and x < h and y >= 0 and y < w)
+      {
+        if (map[x][y].status == Status::NOT_BURNING)
+          { map[x][y].status = Status::BURNING; }
+      }
+    }
+  }
+
+}
+
+void mouse(int button, int state, int x, int y)
+{
+    // Save the button state
+    if (button == GLUT_LEFT_BUTTON)
+      { leftMouseButtonDown = (state == GLUT_DOWN); }
+
+    else if (button == GLUT_RIGHT_BUTTON)
+      { rightMouseButtonDown = (state == GLUT_DOWN); }
+
+    // Save the mouse position
+    mouseXPos = (int64_t)y;
+    mouseYPos = (int64_t)x;
 }
 
 void display()
 {
-  /*
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
-  glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
-    
-  // Draw a Red 1x1 Square centered at origin
-  glBegin(GL_QUADS);              // Each set of 4 vertices form a quad
-    glColor3f(1.0f, 0.0f, 0.0f); // Red
-    glVertex2f(-0.5f, -0.5f);    // x, y
-    glVertex2f( 0.5f, -0.5f);
-    glVertex2f( 0.5f,  0.5f);
-    glVertex2f(-0.5f,  0.5f);
-  glEnd();
-    
-  glFlush();  // Render now
-*/
-
   GLfloat minSize = 60.0f/map.size();
-  //GLfloat greenIncrement = 0.5f/deathTime;
-  
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0.0, 60, 60, 0.0, -1.0, 1.0);
@@ -342,12 +403,12 @@ void display()
   glLoadIdentity();
   glViewport(0, 0, MAX_SIZE, MAX_SIZE);
 
-  // Update data of every cell on map
-  for (int64_t i = 0; i < h; ++i) {
-    for (int64_t j = 0; j < w; ++j) {
-      updateCell(map, newMap, i, j, Wind::N);
-    }
+  if (leftMouseButtonDown) {
+    igniteCell(map, mouseXPos, mouseYPos);
   }
+
+  // Update data of every cell on map
+  updateCellFunc(map, newMap);
   // Update status of every cell
   updateMapStatus(newMap);
   map = newMap;
@@ -380,7 +441,7 @@ void display()
 
         case Status::BURNED:
           // gray
-          glColor3f(0.5f, 0.5f, 0.5f);
+          glColor3f(0.1f, 0.1f, 0.1f);
           break;
         
         default:
@@ -406,30 +467,27 @@ int main (int argc, char *argv[])
 
   // Variables init
   bool  gui {false},
-        show_help {false};
+        show_help {false},
+        load_map {false};
+  
   // Parses arguments, fills variables with values
-  parseArgs(argc, argv, gui, show_help);
+  parseArgs(argc, argv, gui, show_help, load_map);
 
   if (show_help) { showHelp(); exit(EXIT_SUCCESS); }
 
-  srand(time(NULL));
+  srand(time(NULL)); // initialize random function
   std::vector<std::string> mapChars;
-  mapChars = seed(mapChars, 1000, '@', 40000.0f);
-  mapChars = seed(mapChars, 1000, 'Y', 52000.0f); // seed (40000,55000)
+  mapChars = seed(mapChars, MAX_SIZE, '@', 40000.0f);
+  mapChars = seed(mapChars, MAX_SIZE, 'Y', 52000.0f); // seed (40000,55000)
   //TODO: sem hodit po generovani nejake ohnisko v danom bode and watch the world burn
-  mapChars[500][500] = 'X';
-/*
-  mapChars = {".YY.Y.Y...",
-              ".@...Y....",
-              "......Y...",
-              "YYY@Y.Y.Y.",
-              "Y.Y...Y..Y",
-              ".....XYY..",
-              ".Y....Y..Y",
-              "Y.Y...YY..",
-              "...Y......",
-              "....Y.Y@.Y" };
-*/
+  for (auto x = (MAX_SIZE/2 - 2); x <= (MAX_SIZE/2 + 2); ++x) 
+  {
+    for (auto y = (MAX_SIZE/2 - 2); y <= (MAX_SIZE/2 + 2); ++y)
+    {
+      mapChars[x][y] = 'X';
+    }
+  }
+
   std::tie(h, w) = loadMap(map, mapChars);
   newMap = map;
 
@@ -438,8 +496,9 @@ int main (int argc, char *argv[])
     //glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH);
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(MAX_SIZE, MAX_SIZE);
-    glutCreateWindow("IMS");
+    glutCreateWindow("IMS - Wildfire simulation - xmlkvy00, xmudry01");
     glutDisplayFunc(display);
+    glutMouseFunc(mouse);
     glutMainLoop();
   }
   else {
@@ -449,15 +508,11 @@ int main (int argc, char *argv[])
       // Print the map
       printMap(map);
       // Update data of every cell on map
-      for (int64_t i = 0; i < h; ++i) {
-        for (int64_t j = 0; j < w; ++j) {
-          updateCell(map, newMap, i, j, Wind::N);
-        }
-      }
+      updateCellFunc(map, newMap);
       // Update status of every cell
       updateMapStatus(newMap);
       map = newMap;
-      std::this_thread::sleep_for(1s);
+      //std::this_thread::sleep_for(1s);
     }
   }
   exit(EXIT_SUCCESS);

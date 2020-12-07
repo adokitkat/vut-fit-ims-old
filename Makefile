@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-std=c++17 -Wall -Wpedantic# -Werror
+CXXFLAGS=-std=c++17 -Wall -Wpedantic#-fopenmp# -Werror
 DEBUG=-g
 RELEASE=-O3
 LIBS=-lglut -lGLU -lGL
@@ -12,7 +12,7 @@ BINDIR=
 LOGIN=11_xmlkvy00_xmudry01
 OUTPUT=ims
 
-.PHONY: all build build-debug release debug run run-terminal build-run
+.PHONY: all build build-debug release debug run run-terminal build-run doc
 
 all: build-debug
 
@@ -34,3 +34,8 @@ run-terminal:
 	./ims
 
 build-run: all run
+
+# Local documentation building
+doc: $(DOCDIR)main.tex $(DOCDIR)manual.bib $(DOCDIR)czechiso.bst
+	cd $(DOCDIR) && latexmk -pdf main.tex && latexmk -c
+	mv $(DOCDIR)main.pdf dokumentacia.pdf
